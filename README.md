@@ -10,6 +10,7 @@
 	- 源码用 ts 写，想自己修改也难以入手
 	- 与 antd 绑定很牢，修改较为困难，甚至初始化表格数据也要手动(不能根据 state )
 	- 很多时候自己手动验证，甚至动态验证，冗余代码较多
+	- 需要两套数据同步
 	
 ## Introduction
 - FormValidation 只管理状态，页面逻辑获取状态，然后根据状态做相应的样式或文案处理，这样解耦后，可以增加灵活性并用在不同框架的环境里(同时源码也较少比较好修改…… ) 
@@ -17,39 +18,42 @@
 
 ## Usage
 - 初始化 
-	- ```
-class MyFormValidation extends FormValidation {
-    constructor(_this) {
-        const params = {
-            sceneTitle: {
-                props: {
-                    // NOTE: can not set value here
-                    placeholder: '必填',
-                    onChange(event) {
-                        _this.setState({
-                            scene_title: event.target.value
-                        });
-                    }
-                },
-                validation: {
-                    rules: [
-                        {
-                            message: '必填',
-                            validator: () => {
-                                return _this.state.scene_title.length > 0
-                            }
-                        }
-                    ]
-                }
-            }
 
-        };
+```
+	class MyFormValidation extends FormValidation {
+	    constructor(_this) {
+		const params = {
+		    sceneTitle: {
+			props: {
+			    // NOTE: can not set value here
+			    placeholder: '必填',
+			    onChange(event) {
+				_this.setState({
+				    scene_title: event.target.value
+				});
+			    }
+			},
+			validation: {
+			    rules: [
+				{
+				    message: '必填',
+				    validator: () => {
+					return _this.state.scene_title.length > 0
+				    }
+				}
+			    ]
+			}
+		    }
 
-        super(_this, params);
-    }
-	```
+		};
+
+		super(_this, params);
+	    }
+```
+
 - 使用 
-	- ``` 
+
+``` 
 	import FormValidation from './MyFormValidation'
 	// init 需要把相对应的命名空间传入，比如 React 中的 this
 	form = new FormValidation(this);
@@ -68,9 +72,10 @@ class MyFormValidation extends FormValidation {
 	form.sceneTitle.validation.valid
 	form.sceneTitle.validation.message
 	form.valid
-	```
+```
 
 ## TODO
+- this 暴露的东西太多，需要人为规范使用，应限制一些功能
 - 很多地方默认传入的参数都是合法的，需要进行校验和提示，控制所有的错误
 - 针对 React 的一些问题进行了特定的优化，其他框架内使用尚未知道有什么具体的坑
 - message 不够人性化，整体检查时候有些麻烦
